@@ -9,6 +9,12 @@ DeviceBTSelect::DeviceBTSelect(QWidget *parent)
 
     devicesList = new QListWidget();
 
+    connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered,
+            this, &DeviceBTSelect::addDevice);
+
+    connect(devicesList, &QListWidget::itemActivated,
+            this, &DeviceBTSelect::itemActivated);
+
     QGridLayout *mainLayout = new QGridLayout();
     mainLayout->addWidget(devicesList, 0, 0);
 

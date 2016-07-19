@@ -19,7 +19,7 @@ class ControlWindow : public QMainWindow
 public:
     explicit ControlWindow(QWidget *parent = 0);
     ~ControlWindow();
-private slots:
+public slots:
     void on_connectBtnClicked(bool);
     void btSocketConnected();
     void btSocketError(QBluetoothSocket::SocketError);

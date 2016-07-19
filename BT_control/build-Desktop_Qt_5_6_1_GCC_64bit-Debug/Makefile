@@ -50,7 +50,7 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../main.cpp \
 		../controlwindow.cpp \
-		devicebtselect.cpp moc_controlwindow.cpp \
+		../devicebtselect.cpp moc_controlwindow.cpp \
 		moc_devicebtselect.cpp
 OBJECTS       = main.o \
 		controlwindow.o \
@@ -195,7 +195,7 @@ DIST          = /home/Qt5.6.1/5.6/gcc_64/mkspecs/features/spec_pre.prf \
 		../../BT_control.pro ../controlwindow.h \
 		../devicebtselect.h ../main.cpp \
 		../controlwindow.cpp \
-		devicebtselect.cpp
+		../devicebtselect.cpp
 QMAKE_TARGET  = BT_control
 DESTDIR       = 
 TARGET        = BT_control
@@ -503,7 +503,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../controlwindow.h ../devicebtselect.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../controlwindow.cpp devicebtselect.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../controlwindow.cpp ../devicebtselect.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1220,8 +1220,158 @@ controlwindow.o: ../controlwindow.cpp ../../../../Qt5.6.1/5.6/gcc_64/include/QtC
 		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qlistwidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o controlwindow.o ../controlwindow.cpp
 
-devicebtselect.o: devicebtselect.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o devicebtselect.o devicebtselect.cpp
+devicebtselect.o: ../devicebtselect.cpp ../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/QGridLayout \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qgridlayout.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qlayout.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qobject.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qnamespace.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qglobal.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qconfig.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qfeatures.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qtypetraits.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qisenum.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qlogging.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qflags.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_gcc.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_armv7.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_armv6.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_armv5.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_ia64.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_x86.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qatomic_unix.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qmutex.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qnumeric.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qstring.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qchar.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qbytearray.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qrefcount.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qarraydata.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qlist.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qiterator.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qpair.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qstringlist.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qregexp.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qmetatype.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qobject_impl.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qlayoutitem.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qsizepolicy.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qrect.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qmargins.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qsize.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qpoint.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qboxlayout.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qwidget.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qwindowdefs.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qpaintdevice.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qpalette.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qcolor.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qrgb.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qrgba64.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qbrush.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qvector.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qmatrix.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qpolygon.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qregion.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qdatastream.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qiodevice.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qline.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qtransform.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qpainterpath.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qimage.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qpixelformat.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qpixmap.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qsharedpointer.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qshareddata.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qhash.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qfont.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qfontmetrics.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qfontinfo.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qcursor.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qkeysequence.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qevent.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qvariant.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qmap.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qdebug.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qtextstream.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qlocale.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qset.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qurl.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qurlquery.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qfile.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qfiledevice.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qvector2d.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qtouchdevice.h \
+		../devicebtselect.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/qbluetoothglobal.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/QBluetoothDeviceInfo \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/qbluetoothdeviceinfo.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/QBluetoothDeviceDiscoveryAgent \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/qbluetoothdevicediscoveryagent.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/QObject \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/QBluetoothAddress \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/qbluetoothaddress.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/QByteArray \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/QString \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/QMetaType \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/QBluetoothLocalDevice \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/qbluetoothlocaldevice.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/QList \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/QBluetoothHostInfo \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtBluetooth/qbluetoothhostinfo.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/QListView \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qlistview.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qframe.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qvalidator.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtCore/qregularexpression.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtGui/qicon.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qslider.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qstyle.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qtabwidget.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/QDialog \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qdialog.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/QPushButton \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/QListWidget \
+		../../../../Qt5.6.1/5.6/gcc_64/include/QtWidgets/qlistwidget.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o devicebtselect.o ../devicebtselect.cpp
 
 moc_controlwindow.o: moc_controlwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_controlwindow.o moc_controlwindow.cpp
