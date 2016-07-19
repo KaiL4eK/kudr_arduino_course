@@ -22,7 +22,6 @@ public:
     void startScan();
 private slots:
     void addDevice(const QBluetoothDeviceInfo &info);
-    void hostModeStateChanged(QBluetoothLocalDevice::HostMode mode);
     void itemActivated(QListWidgetItem *item);
 private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
