@@ -27,7 +27,6 @@ private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
     QBluetoothLocalDevice *localDevice;
     QListWidget *devicesList;
-    QPushButton *scanBtn;
 
     QMap<QListWidgetItem *, QBluetoothDeviceInfo> m_discoveredDevices;
     QBluetoothDeviceInfo m_deviceInfo;
