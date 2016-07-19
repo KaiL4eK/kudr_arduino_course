@@ -32,6 +32,7 @@ ControlWindow::ControlWindow(QWidget *parent)
 ControlWindow::~ControlWindow()
 {
     qDebug() << "ControlWindow destructor";
+    delete btSocket;
 }
 
 void ControlWindow::on_connectBtnClicked(bool)
@@ -43,7 +44,7 @@ void ControlWindow::on_connectBtnClicked(bool)
     }
 
     connectBtn->setEnabled(false);
-
+    QString serviceUuid(QStringLiteral("00001101-0000-1000-8000-00805F9B34FB"));
     DeviceBTSelect deviceSelect;
     deviceSelect.startScan();
     if ( deviceSelect.exec() == QDialog::Accepted ) {
@@ -53,13 +54,13 @@ void ControlWindow::on_connectBtnClicked(bool)
         btSocket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
         qDebug() << "Create socket";
         btSocket->connectToService(deviceInfo.address(),
-                                   deviceInfo.deviceUuid());
+                                   QBluetoothUuid(serviceUuid));
         qDebug() << "ConnectToService done";
 
         connect(btSocket, &QBluetoothSocket::connected,
                 this, &ControlWindow::btSocketConnected);
 
-        connect(btSocket, &QBluetoothSocket::error,
+        connect(btSocket, static_cast<void(QBluetoothSocket::*)(QBluetoothSocket::SocketError)>(&QBluetoothSocket::error),
                 this, &ControlWindow::btSocketError);
     }
 
@@ -73,7 +74,8 @@ void ControlWindow::btSocketConnected()
 
 void ControlWindow::btSocketError(QBluetoothSocket::SocketError error)
 {
-    connectStatusLineEdit->setText("Error: ");
+    connectStatusLineEdit->setText("Error: " + QString::number(error));
+    qDebug() << connectStatusLineEdit->text();
 }
 
 void ControlWindow::keyPressEvent(QKeyEvent *event)

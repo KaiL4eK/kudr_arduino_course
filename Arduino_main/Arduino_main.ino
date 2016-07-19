@@ -33,7 +33,8 @@ void setup()
   pinMode(in_p, OUTPUT);
   pinMode(in_n, OUTPUT);
 
-  analogWrite(en, 45);
+//  analogWrite(en, 45);
+  digitalWrite(en, HIGH);
   
   Serial.println("Ok, start =)");
 }
@@ -62,11 +63,11 @@ void loop()
   }
   // Count encoder on motor: 360 degrees == 75 ticks on rise/fall
   // One rise or fall per rotation
-  if (turnage >= 75) {
+/*  if (turnage >= 75) {
     digitalWrite(in_p, LOW);
     digitalWrite(in_n, LOW);
   }
-  
+*/  
   if ( prev_turn != turnage ) {
     Serial.println(turnage);
     prev_turn = turnage; 
