@@ -1,12 +1,23 @@
 #include <SoftwareSerial.h>
-SoftwareSerial BT(10, 11); // RX, TX
+#include <LiquidCrystal.h>
 
 const byte  interruptPin = 2,
-            readIntPin   = 3,
-            en           = 9,
-            in_p         = 7,
-            in_n         = 8,
-            voltage_2    = A5;
+            readIntPin   = A4,
+            en           = 12,
+            in_p         = A0,
+            in_n         = A1,
+            voltage_2    = A7,
+            bt_uart_tx   = A2,
+            bt_uart_rx   = A3,
+            lcd_e        = 8,
+            lcd_rs       = 9,
+            lcd_d4       = 4,
+            lcd_d5       = 5,
+            lcd_d6       = 6,
+            lcd_d7       = 7;
+
+SoftwareSerial BT(bt_uart_rx, bt_uart_tx);
+LiquidCrystal lcd(lcd_rs, lcd_e, lcd_d4, lcd_d5, lcd_d6, lcd_d7);
 
 volatile int turnage = 0;
 
@@ -22,6 +33,8 @@ void setup()
 {
   Serial.begin(9600);
   BT.begin(9600);
+  lcd.begin(16, 2);
+  lcd.print("Motor encoder:");
 
   attachInterrupt(0, hall_sensor, RISING);
 
@@ -45,7 +58,7 @@ void loop()
   if (BT.available()) {
     a=(BT.read());
     if (a=='W') {
-      turnage = 0;
+      //wturnage = 0;
       digitalWrite(in_p, HIGH);
       digitalWrite(in_n, LOW);
     }
@@ -66,15 +79,20 @@ void loop()
   }
 */  
   if ( prev_turn != turnage ) {
-    Serial.println(turnage);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Motor encoder:");
+    lcd.setCursor(0, 1);
+    lcd.print(turnage);
     prev_turn = turnage; 
   }
-  
+/*  
   Serial.print("Voltage: ");
   //analog*2(Div)*5(V)/1023(ADC)
   float voltage = analogRead(voltage_2)*10.0/1023;
   delay(10);
   voltage = analogRead(voltage_2)*10.0/1023;
   Serial.println(voltage); 
+*/
 }
 
