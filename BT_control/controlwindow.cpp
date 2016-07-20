@@ -54,17 +54,26 @@ void ControlWindow::on_connectBtnClicked(bool)
         btSocket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
         qDebug() << "Create socket";
         btSocket->connectToService(deviceInfo.address(),
-                                   QBluetoothUuid(serviceUuid));
+                                   deviceInfo.deviceUuid());
+                                   //QBluetoothUuid(serviceUuid));
         qDebug() << "ConnectToService done";
 
         connect(btSocket, &QBluetoothSocket::connected,
                 this, &ControlWindow::btSocketConnected);
+
+        connect(btSocket, &QBluetoothSocket::disconnected,
+                this, &ControlWindow::btSocketDisconnected);
 
         connect(btSocket, static_cast<void(QBluetoothSocket::*)(QBluetoothSocket::SocketError)>(&QBluetoothSocket::error),
                 this, &ControlWindow::btSocketError);
     }
 
     connectBtn->setEnabled(true);
+}
+
+void ControlWindow::btSocketDisconnected()
+{
+    connectStatusLineEdit->setText("Disconnected from" + btSocket->peerName());
 }
 
 void ControlWindow::btSocketConnected()
@@ -80,15 +89,20 @@ void ControlWindow::btSocketError(QBluetoothSocket::SocketError error)
 
 void ControlWindow::keyPressEvent(QKeyEvent *event)
 {
-    int keyInput = event->key();
-    switch (keyInput) {
-        case 'w':
-        case 'a':
-        case 's':
-        case 'd':
-        case ' ':
-            qDebug() << "!";
-        default:
-            QWidget::keyPressEvent(event);
+    if (   !btSocket
+        || !btSocket->isOpen()) {
+        return;
+    }
+
+    char keyInput = event->key();
+    qDebug() << keyInput;
+    if (    keyInput == 'W'
+        ||  keyInput == 'S'
+        ||  keyInput == 'A'
+        ||  keyInput == 'D'
+        ||  keyInput == ' ') {
+        btSocket->write(&keyInput, 1);
+    } else {
+        QWidget::keyPressEvent(event);
     }
 }
