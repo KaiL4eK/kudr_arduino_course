@@ -5,6 +5,8 @@
 #include <QLineEdit>
 #include <QKeyEvent>
 #include <QBluetoothSocket>
+#include <QTextEdit>
+#include <QTimer>
 
 #include "devicebtselect.h"
 
@@ -24,13 +26,20 @@ private slots:
     void btSocketConnected();
     void btSocketError(QBluetoothSocket::SocketError);
     void btSocketDisconnected();
+    void btSocketReadyRead();
+    void btSendCommand();
 private:
-    QLineEdit *nameLineEdit;
-    QLineEdit *connectStatusLineEdit;
-    QPushButton *connectBtn;
-    QBluetoothSocket *btSocket;
+    QLineEdit           *nameLineEdit;
+    QLineEdit           *connectStatusLineEdit;
+    QTextEdit           *BTOutputTextEdit;
+    QPushButton         *connectBtn;
+    QBluetoothSocket    *btSocket;
+    QString             outputBuffer;
+    QTimer              *senderTimer;
 
-    bool connected;
+    char                keyInput;
+    int                 defaultSendCommand = 1;
+    bool                connected;
 
     void keyPressEvent(QKeyEvent *event);
 };
