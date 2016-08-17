@@ -93,11 +93,11 @@ void ControlWindow::btSocketConnected()
 {
     connectStatusLineEdit->setText("Connected to " + btSocket->peerName());
 
-    senderTimer = new QTimer();
-    senderTimer->setInterval(100);
-    connect(senderTimer, &QTimer::timeout,
-            this, &ControlWindow::btSendCommand);
-    senderTimer->start(100);
+//    senderTimer = new QTimer();
+//    senderTimer->setInterval(100);
+//    connect(senderTimer, &QTimer::timeout,
+//            this, &ControlWindow::btSendCommand);
+//    senderTimer->start(100);
 }
 
 void ControlWindow::btSocketError(QBluetoothSocket::SocketError error)
@@ -111,7 +111,7 @@ void ControlWindow::btSocketReadyRead()
 {
     outputBuffer.append(btSocket->readAll());
     if ( outputBuffer.endsWith("\n") ) {
-        BTOutputTextEdit->append(outputBuffer.left(outputBuffer.length()-1));
+        BTOutputTextEdit->append(outputBuffer.left(outputBuffer.length()));
         outputBuffer.clear();
     }
 }
@@ -121,27 +121,13 @@ void ControlWindow::btSendCommand()
     if ( !btSocket || !btSocket->isOpen() )
         return;
 
-    char ping = 'p';
-    btSocket->write(&ping, 1);
-//    keyInput = defaultSendCommand;
+    qDebug() << "Send: " << keyInput;
+    btSocket->write(&keyInput, 1);
 }
 
 void ControlWindow::keyPressEvent(QKeyEvent *event)
 {
-    if ( !btSocket || !btSocket->isOpen() )
-        return;
-
     keyInput = event->key();
     qDebug() << "Write: " << keyInput;
     btSendCommand();
-
-//    if (    keyInput == 'W'
-//        ||  keyInput == 'S'
-//        ||  keyInput == 'A'
-//        ||  keyInput == 'D'
-//        ||  keyInput == ' ') {
-//        btSocket->write(&keyInput, 1);
-//    } else {
-//        QWidget::keyPressEvent(event);
-//    }
 }
