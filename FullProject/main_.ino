@@ -7,6 +7,7 @@
 // #define ENABLE_ENCODERS
 // #define IR_RECEIVER
 // #define ENABLE_SHARP_IR
+#define ENABLE_POTENTIOMETER
 
 #ifdef ENABLE_LCD
 #include <LiquidCrystal.h>
@@ -163,6 +164,11 @@ void setup ( void )
 //---------------------------------------------------------
 void loop ( void )
 {
+#ifdef ENABLE_POTENTIOMETER
+    Serial.println( analogRead( A5 ) );
+    delay( 100 );
+#endif
+
 #ifdef IR_RECEIVER
     if ( Serial1.available() ) {
         byte input = Serial1.read();
