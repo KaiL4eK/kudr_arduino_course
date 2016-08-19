@@ -1,9 +1,12 @@
 // #define ENABLE_LCD
-#define SERIAL_ECHO
+// #define SERIAL_ECHO
 // #define VOLTAGE_CONTROL
 // #define MOTOR_CONTROL
 // #define SERVO_TEST
+// #define PWM_TEST
 // #define ENABLE_ENCODERS
+// #define IR_RECEIVER
+// #define ENABLE_SHARP_IR
 
 #ifdef ENABLE_LCD
 #include <LiquidCrystal.h>
@@ -91,10 +94,10 @@ Servo servo;
 #endif
 
 #ifdef ENABLE_ENCODERS
-int encoder_left_pin_A  = 2;
-int encoder_right_pin_A = 3;
-int encoder_left_pin_B  = 31;
-int encoder_right_pin_B = 30;
+int encoder_left_pin_A  = 3;
+int encoder_right_pin_A = 2;
+int encoder_left_pin_B  = 22;
+int encoder_right_pin_B = 23;
 
 volatile long encoder_turnage_right = 0;
 volatile long encoder_turnage_left  = 0;
@@ -107,22 +110,31 @@ void encoder_sensor_left() {
 }
 
 void encoder_sensor_right() {
-    if ( digitalRead( encoder_right_pin_B ) == LOW )
-        encoder_turnage_right++;
-    else
+    if ( digitalRead( encoder_right_pin_B ) == HIGH )
         encoder_turnage_right--;
+    else
+        encoder_turnage_right++;
 }
 #endif
 //---------------------------------------------------------
 
 void setup ( void )
 {
-    // pinMode( 13, OUTPUT );
+#ifdef PWM_TEST
+    pinMode( 13, OUTPUT );
+#endif
+
+#ifdef IR_RECEIVER
+    Serial1.begin( 2400 );
+#endif
+
     Serial.begin( 115200 );
     Serial3.begin( 115200 );
 
 #ifdef SERVO_TEST
-    servo.attach( 33 );
+    servo.attach( 24 );
+    servo.write( 90 );
+    delay( 10000 );
 #endif
 
 #ifdef MOTOR_CONTROL
@@ -142,15 +154,31 @@ void setup ( void )
     pinMode( encoder_left_pin_B,  INPUT );
     pinMode( encoder_right_pin_B, INPUT );
 
-    attachInterrupt( 0,  encoder_sensor_left, RISING );
-    attachInterrupt( 1,  encoder_sensor_right, RISING );
+    attachInterrupt( 1,  encoder_sensor_left, RISING );
+    attachInterrupt( 0,  encoder_sensor_right, RISING );
 #endif
 // 
     Serial.println( "/---Start---/" );
 }
-
+//---------------------------------------------------------
 void loop ( void )
 {
+#ifdef IR_RECEIVER
+    if ( Serial1.available() ) {
+        byte input = Serial1.read();
+        if ( input != 0xFE )
+            Serial.println( input, HEX );
+    }
+#endif
+
+#ifdef ENABLE_SHARP_IR
+    delay( 50 );
+    int sharp_ir_adc = analogRead( A0 );
+    int val = (6762 / (sharp_ir_adc - 9)) - 4;
+
+    Serial.print( "Sharp " );
+    Serial.println( val );
+#endif
     // Serial.println( "Hello =)" );
 #ifdef VOLTAGE_CONTROL
 #define SEND_DATA_PERIOD_MS 1000
@@ -163,17 +191,38 @@ void loop ( void )
     }
 #endif
 
+#ifdef PWM_TEST
+#define CHANGE_BRIGHTNESS_DELAY_MS 30
+    int brightness = 0;
+    for ( brightness = 0; brightness <= 255; brightness++ ) {
+        analogWrite( 13, brightness );
+        delay( CHANGE_BRIGHTNESS_DELAY_MS );
+    }
+
+    delay( 500 );
+    
+    for ( brightness = 255; brightness >= 0; brightness-- ) {
+        analogWrite( 13, brightness );
+        delay( CHANGE_BRIGHTNESS_DELAY_MS );
+    }
+    
+    delay( 500 );
+#endif
+
 #ifdef SERVO_TEST
 #define SERVO_DELAY 15
-    int servo_angle = 0;
-    for ( servo_angle = 0; servo_angle <= 180; servo_angle++ ) {
+#define SERVO_BORDER_OFFSET 60
+#define SERVO_MAX_ANGLE     (180 - SERVO_BORDER_OFFSET)
+#define SERVO_MIN_ANGLE     (0   + SERVO_BORDER_OFFSET)
+    int servo_angle;
+    for ( servo_angle = SERVO_MIN_ANGLE; servo_angle <= SERVO_MAX_ANGLE; servo_angle++ ) {
         servo.write( servo_angle );
         delay( SERVO_DELAY );
     }
 
     delay( 500 );
     
-    for ( servo_angle = 180; servo_angle >= 0; servo_angle-- ) {
+    for ( servo_angle = SERVO_MAX_ANGLE; servo_angle >= SERVO_MIN_ANGLE; servo_angle-- ) {
         servo.write( servo_angle );
         delay( SERVO_DELAY );
     }
@@ -237,6 +286,9 @@ void loop ( void )
                     motor_status = MOTOR_TURN_RIGHT;
                 } 
                 motor_power += POWER_STEP;       
+                break;
+            case 'E':
+                encoder_turnage_right = encoder_turnage_left = 0;      
                 break;
             case 'Z':     
             // default:
