@@ -1,13 +1,16 @@
 // #define ENABLE_LCD
 // #define SERIAL_ECHO
 // #define VOLTAGE_CONTROL
-// #define MOTOR_CONTROL
+#define MOTOR_CONTROL
+#define ENABLE_MOTORS
 // #define SERVO_TEST
 // #define PWM_TEST
 // #define ENABLE_ENCODERS
-// #define IR_RECEIVER
+#define IR_RECEIVER
+// #define ENABLE_BT_CONTROL
 // #define ENABLE_SHARP_IR
-#define ENABLE_POTENTIOMETER
+// #define ENABLE_POTENTIOMETER
+#define ENABLE_BUZZER
 
 #ifdef ENABLE_LCD
 #include <LiquidCrystal.h>
@@ -23,10 +26,10 @@ LiquidCrystal lcd(rs_pin, e_pin, d4_pin, d5_pin, d6_pin, d7_pin);
 #endif
 
 #ifdef MOTOR_CONTROL
-int motorR_pos = 10;  
-int motorR_neg = 9; 
-int motorL_pos = 11;  
-int motorL_neg = 8;
+int motorR_pos = 6;  
+int motorR_neg = 5; 
+int motorL_pos = 7;  
+int motorL_neg = 4;
 
 #define MOTOR_RIGHT (1 << 0)
 #define MOTOR_LEFT  (1 << 1)
@@ -80,9 +83,10 @@ typedef enum motor_status_
     MOTOR_STOP
 }motor_status_t;
 
-#define POWER_STEP 40
-#define POWER_MAX  255
-#define POWER_MIN  -255
+#define MOTOR_POWER_STEP                40
+#define MOTOR_POWER_INCREMENT_TIME_MS   100
+#define MOTOR_POWER_MAX                 255
+#define MOTOR_POWER_MIN                 -255
 
 motor_status_t motor_status = MOTOR_STOP;
 int            motor_power  = 0;
@@ -92,6 +96,7 @@ int            motor_power  = 0;
 #include <Servo.h>
 
 Servo servo;
+int servo_pin = 24;
 #endif
 
 #ifdef ENABLE_ENCODERS
@@ -117,23 +122,106 @@ void encoder_sensor_right() {
         encoder_turnage_right++;
 }
 #endif
+
+#ifdef IR_RECEIVER
+#define IR_UP_BUTTON_CODE       0x60
+#define IR_DOWN_BUTTON_CODE     0x06
+#define IR_RIGHT_BUTTON_CODE    0x18
+#define IR_LEFT_BUTTON_CODE     0x1E
+#endif
+
+#ifdef ENABLE_BUZZER
+#include "notes.h"
+int buzzer_pin = 52;
+
+int melody[] = {
+  NOTE_E7, NOTE_E7, 0, NOTE_E7,
+  0, NOTE_C7, NOTE_E7, 0,
+  NOTE_G7, 0, 0,  0,
+  NOTE_G6, 0, 0, 0,
+ 
+  NOTE_C7, 0, 0, NOTE_G6,
+  0, 0, NOTE_E6, 0,
+  0, NOTE_A6, 0, NOTE_B6,
+  0, NOTE_AS6, NOTE_A6, 0,
+ 
+  NOTE_G6, NOTE_E7, NOTE_G7,
+  NOTE_A7, 0, NOTE_F7, NOTE_G7,
+  0, NOTE_E7, 0, NOTE_C7,
+  NOTE_D7, NOTE_B6, 0, 0,
+ 
+  NOTE_C7, 0, 0, NOTE_G6,
+  0, 0, NOTE_E6, 0,
+  0, NOTE_A6, 0, NOTE_B6,
+  0, NOTE_AS6, NOTE_A6, 0,
+ 
+  NOTE_G6, NOTE_E7, NOTE_G7,
+  NOTE_A7, 0, NOTE_F7, NOTE_G7,
+  0, NOTE_E7, 0, NOTE_C7,
+  NOTE_D7, NOTE_B6, 0, 0
+};
+//Mario main them tempo
+int tempo[] = {
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  9, 9, 9,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  9, 9, 9,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+};
+
+void buzz ( int targetPin, long frequency, long length ) 
+{
+    long delayValue = 1000000 / frequency / 2; // calculate the delay value between transitions
+    //// 1 second's worth of microseconds, divided by the frequency, then split in half since
+    //// there are two phases to each cycle
+    long numCycles = frequency * length / 1000; // calculate the number of cycles for proper timing
+    //// multiply frequency, which is really cycles per second, by the number of seconds to
+    //// get the total number of cycles to produce
+    for (long i = 0; i < numCycles; i++) { // for the calculated length of time...
+        digitalWrite(targetPin, HIGH); // write the buzzer pin high to push out the diaphram
+        delayMicroseconds(delayValue); // wait for the calculated delay value
+        digitalWrite(targetPin, LOW); // write the buzzer pin low to pull back the diaphram
+        delayMicroseconds(delayValue); // wait again or the calculated delay value
+    }
+}
+
+#endif
 //---------------------------------------------------------
 
 void setup ( void )
 {
-#ifdef PWM_TEST
-    pinMode( 13, OUTPUT );
+#ifdef ENABLE_BUZZER
+    // pinMode( buzzer_pin, OUTPUT );
 #endif
 
 #ifdef IR_RECEIVER
-    Serial1.begin( 2400 );
+    Serial2.begin( 2400 );
 #endif
 
     Serial.begin( 115200 );
     Serial3.begin( 115200 );
 
 #ifdef SERVO_TEST
-    servo.attach( 24 );
+    servo.attach( servo_pin );
     servo.write( 90 );
     delay( 10000 );
 #endif
@@ -146,7 +234,7 @@ void setup ( void )
 #endif
 
 #ifdef ENABLE_LCD
-    lcd.begin(16, 2);
+    lcd.begin( 16, 2 );
 #endif
 
 #ifdef ENABLE_ENCODERS
@@ -164,22 +252,175 @@ void setup ( void )
 //---------------------------------------------------------
 void loop ( void )
 {
+
+#if defined(IR_RECEIVER)
+#define sign(x) (x > 0 ? 1 : x < 0 ? -1 : 0)
+
+#define IR_TIMEOUT_MS       100
+#define MOTOR_CONST_POWER   100
+    static int motor_left_desired_power    = 0;
+    static int motor_right_desired_power   = 0;
+
+    static int motor_left_power            = 0;
+    static int motor_right_power           = 0;
+
+    static int motor_left_inc              = 0;
+    static int motor_right_inc             = 0;
+
+    static unsigned long motor_event_time_ms = 0;
+    static unsigned long command_time_ms = 0;
+
+    byte input = Serial2.read();
+    switch( input ) {
+        case IR_UP_BUTTON_CODE:
+            if ( motor_status != MOTOR_FORWARD )
+                Serial.println( "Forward" );
+
+            motor_status = MOTOR_FORWARD;
+            motor_right_desired_power = motor_left_desired_power = MOTOR_CONST_POWER;
+            command_time_ms = millis();
+            break;      
+        case IR_DOWN_BUTTON_CODE:
+            if ( motor_status != MOTOR_BACKWARD )
+                Serial.println( "Backward" );
+
+            motor_status = MOTOR_BACKWARD;
+            motor_right_desired_power = motor_left_desired_power = -MOTOR_CONST_POWER/2;
+            command_time_ms = millis();
+            break;      
+        case IR_LEFT_BUTTON_CODE:
+            if ( motor_status != MOTOR_TURN_LEFT )
+                Serial.println( "Left" );
+
+            motor_status = MOTOR_TURN_LEFT;
+            motor_right_desired_power = MOTOR_CONST_POWER;
+            motor_left_desired_power  = -MOTOR_CONST_POWER;
+            command_time_ms = millis();
+            break;      
+        case IR_RIGHT_BUTTON_CODE:
+            if ( motor_status != MOTOR_TURN_RIGHT )
+                Serial.println( "Right" );
+  
+            motor_status = MOTOR_TURN_RIGHT;
+            motor_right_desired_power = -MOTOR_CONST_POWER;
+            motor_left_desired_power  = MOTOR_CONST_POWER;
+            command_time_ms = millis();
+            break;  
+        default:
+            if ( millis() - command_time_ms > IR_TIMEOUT_MS ) {
+                if ( motor_status != MOTOR_STOP )
+                    Serial.println( "Stop" );
+
+                motor_status = MOTOR_STOP;
+                motor_right_desired_power = motor_left_desired_power = 0;
+            }
+    }
+
+    if ( millis() - motor_event_time_ms > MOTOR_POWER_INCREMENT_TIME_MS ) {
+        motor_event_time_ms = millis();
+
+        motor_right_inc = sign( motor_right_desired_power - motor_right_power ) * MOTOR_POWER_STEP;
+        motor_left_inc = sign( motor_left_desired_power - motor_left_power ) * MOTOR_POWER_STEP;
+
+        if ( motor_right_inc ) {
+            motor_right_power += motor_right_inc;
+            if ( (motor_right_inc > 0 && motor_right_power > motor_right_desired_power) || 
+                 (motor_right_inc < 0 && motor_right_power < motor_right_desired_power) )
+                motor_right_power = motor_right_desired_power;
+        }
+
+        if ( motor_right_inc ) {
+            motor_left_power += motor_left_inc;
+            if ( (motor_left_inc > 0 && motor_left_power > motor_left_desired_power) || 
+                 (motor_left_inc < 0 && motor_left_power < motor_left_desired_power) )
+                motor_left_power = motor_left_desired_power;
+        }
+    }
+#ifdef ENABLE_MOTORS
+    motor_start( motor_right_power, MOTOR_RIGHT );
+    motor_start( motor_left_power, MOTOR_LEFT );
+#endif
+
+#ifdef ENABLE_BUZZER
+#define SOUND_BACK_DELAY_MS 600
+    static unsigned long buzzer_stop_time_ms = 0;
+    static bool back_sound_enable = false;
+
+    static bool mario_soubnd_enable = false;
+    static unsigned long buzzer_mario_time_ms = 0;
+    static int current_note = 0;
+    static unsigned int current_delay = 0;
+
+    if ( motor_status == MOTOR_BACKWARD ) {
+        if ( millis() - buzzer_stop_time_ms > SOUND_BACK_DELAY_MS ) {
+            buzzer_stop_time_ms = millis();
+
+            if ( back_sound_enable ) {
+                noTone(buzzer_pin);
+            } else {
+                tone(buzzer_pin, 1432); 
+            }
+            back_sound_enable = !back_sound_enable;
+        }
+    } else if ( motor_status == MOTOR_FORWARD ) {
+        if ( millis() - buzzer_mario_time_ms > current_delay ) {
+            buzzer_mario_time_ms = millis();
+
+            if ( mario_soubnd_enable ) {
+                noTone(buzzer_pin);
+
+                current_delay = 0;
+            } else {
+                int noteDuration = 1100 / tempo[current_note];
+                current_delay = noteDuration * 1.30;
+
+                tone(buzzer_pin, melody[current_note++], noteDuration);
+
+                int size_melody = sizeof(melody) / sizeof(int);
+                if ( current_note == size_melody )
+                    current_note = 0;
+            }
+            mario_soubnd_enable = !mario_soubnd_enable;
+        }
+    } else {
+        // current_note = 0;
+        noTone(buzzer_pin);
+        mario_soubnd_enable = false;
+        back_sound_enable = false;
+    }
+
+    // Serial.println(" 'Mario Theme'");
+    
+    // for (int thisNote = 0; thisNote < size_melody; thisNote++) {
+ 
+    //     // to calculate the note duration, take one second
+    //     // divided by the note type.
+    //     //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    //     int noteDuration = 1100 / tempo[thisNote];
+
+    //     // tone( buzzer_pin, melody[thisNote], noteDuration );
+
+    //     // to distinguish the notes, set a minimum time between them.
+    //     // the note's duration + 30% seems to work well:
+    //     int pauseBetweenNotes = noteDuration * 1.30;
+    //     delay(pauseBetweenNotes);
+
+    //     // stop the tone playing:
+    //     // buzz(buzzer_pin, 0, noteDuration);
+    //     noTone( buzzer_pin );
+    // }
+
+#endif  
+
 #ifdef ENABLE_POTENTIOMETER
     Serial.println( analogRead( A5 ) );
     delay( 100 );
 #endif
-
-#ifdef IR_RECEIVER
-    if ( Serial1.available() ) {
-        byte input = Serial1.read();
-        if ( input != 0xFE )
-            Serial.println( input, HEX );
-    }
 #endif
 
 #ifdef ENABLE_SHARP_IR
     delay( 50 );
-    int sharp_ir_adc = analogRead( A0 );
+    int sharp_ir_adc = analogRead( A1 );
     int val = (6762 / (sharp_ir_adc - 9)) - 4;
 
     Serial.print( "Sharp " );
@@ -256,7 +497,7 @@ void loop ( void )
     }
 #endif
 
-#ifdef MOTOR_CONTROL
+#if defined(MOTOR_CONTROL) && defined(ENABLE_BT_CONTROL)
     if ( Serial3.available() ) {    
         char input = Serial3.read();
 
