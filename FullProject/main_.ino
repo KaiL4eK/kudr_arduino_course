@@ -15,21 +15,21 @@
 #ifdef ENABLE_LCD
 #include <LiquidCrystal.h>
 
-int rs_pin = 45;
-int e_pin  = 43;
-int d4_pin = 53;
-int d5_pin = 51;
-int d6_pin = 49;
-int d7_pin = 57;
+int rs_pin = 22;
+int e_pin  = 23;
+int d4_pin = 24;
+int d5_pin = 25;
+int d6_pin = 26;
+int d7_pin = 27;
 
 LiquidCrystal lcd(rs_pin, e_pin, d4_pin, d5_pin, d6_pin, d7_pin);
 #endif
 
 #ifdef MOTOR_CONTROL
-int motorR_pos = 6;  
-int motorR_neg = 5; 
-int motorL_pos = 7;  
-int motorL_neg = 4;
+int motorR_pos = 5;  
+int motorR_neg = 6; 
+int motorL_pos = 4;  
+int motorL_neg = 7;
 
 #define MOTOR_RIGHT (1 << 0)
 #define MOTOR_LEFT  (1 << 1)
@@ -132,7 +132,7 @@ void encoder_sensor_right() {
 
 #ifdef ENABLE_BUZZER
 #include "notes.h"
-int buzzer_pin = 52;
+int buzzer_pin = 35;
 
 int melody[] = {
   NOTE_E7, NOTE_E7, 0, NOTE_E7,
@@ -235,6 +235,7 @@ void setup ( void )
 
 #ifdef ENABLE_LCD
     lcd.begin( 16, 2 );
+    analogWrite( 8, 100 );
 #endif
 
 #ifdef ENABLE_ENCODERS
