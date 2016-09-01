@@ -44,7 +44,7 @@ void motor_stop ( int side )
     if ( side & MOTOR_LEFT ) {
         digitalWrite( motorL_pos, LOW );    
         digitalWrite( motorL_neg, LOW );
-    }  
+    }
 }  
 
 void motor_start ( int dutyCycle, int side )  
